@@ -1,4 +1,4 @@
-import sys
+import math
 import json
 import tensorflow
 from random import *
@@ -73,17 +73,23 @@ def Train():
     
     network = NeuralNetwork(True, {}, data)
     #print(network.inputs)
-    sys.setrecursionlimit(30)
-    for pointer in range(len(training_images)): #Convering mnist to a list and training on it
-        vector = []
-        for i in training_images[pointer]:
-            for j in i:
-                vector.append(j)
-        TrainOnSingleData(network, vector, training_labels[pointer])
+#    sys.setrecursionlimit(30)
+ #   for pointer in range(len(training_images)): #Convering mnist to a list and training on it
+  #      vector = []
+   #     for i in training_images[pointer]:
+    #        for j in i:
+     #           vector.append(j)
+
+    vector = []
+    for i in training_images[1]:
+        vector.append(i)
+
+    TrainOnSingleData(network, vector, training_labels[1])
 
 def TrainOnSingleData(network, vector, label):
     network.ForwardPass(vector)
-    network.CalculateLoss()
+    network.CalculateCost(label)
+    print("Total loss for sample: %r" % (network.cost))
     print("COMPLETE RUN")
 
 
