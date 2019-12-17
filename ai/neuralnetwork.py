@@ -1,42 +1,43 @@
 import random
 import math
 import json
-"""Refactor this"""
 
 def Sigmoid(x):
     """Sigmoid Activation Function"""
     return (1 + math.exp(x))**(-1)
-
-
 
 class NeuralNetwork():
     """A generic neural network object -> this comment block is horribly out of date and needs re-writing
     -----------------------------------------------------------------
     VARIABLE LIST
     -----------------------------------------------------------------
-    input_size: the number of nodes in the input layer
-    number_of_hidden: the number of hidden layers
-    hidden_size: the number of nodes in the hidden layer
-    output_size: number of nodes in the output layer
-    activation_function: a string containing the name of the
-                         activation function I use, Relu and 
-                         Sigmoid are currently defined, Relu 
-                         used by default
+    
     -----------------------------------------------------------------
     """
     class InputNeuron:
-        """A simple input neuron"""
+        """A simple input neuron
+            
+           Variables:
+           value: the value held by that node
+           bias: a bias to control the offset of the neuron
+        """
         
         def __init__(self, value=0, bias=random.randint(-255, 255)):
             self.value = value
             self.bias = bias
         
         def SetValue(self, value):
+            """Sets the value of the neuron to a passed in value and the neuron's bias"""
             self.value = value + self.bias
     
     class Neuron(InputNeuron):
         """A general neuron that takes the same parameters as the input neuron,
-           but adds weights and calculates sum"""
+           but adds weights and calculates sum
+           
+           Variables:
+           weights: a list of the weights to the previous layer of neurons
+           output: a flag to say whether the given node is in the output layer
+           """
         def __init__(self, number_of_prev_nodes, output):
            super().__init__()
            self.weights = []
@@ -46,14 +47,22 @@ class NeuralNetwork():
            self.output = output #Boolean to see if is in output layer
         
         def WeightedSum(self, previous_layer):
-            #Calculates the weighted sum of a neuron by multiplying weights by the value in the neuron before
+            """Calculates the value of the the neuron based on the previous layer"""
             self.value = 0
             for i in range(len(previous_layer)):
                 self.value += previous_layer[i].value * self.weights[i]
             self.value += self.bias
 
     def __init__(self, created, parameters, data): 
-        """Creating the network structure"""
+        """Creating the network structure
+        Variables:
+        inputs: a list of input neurons
+        hidden: a list of lists. Inner lists contain neurons and act as layers
+        outputs: a list of neurons to act as the output layer
+        cost: an overall metric for how well the network classified a sample. 0 cost is best.
+        """
+        #Creating a new network structure based on the values presented by the user. This is stored in parameters
+        
         if not created:
             self.inputs = [NeuralNetwork.InputNeuron() for i in range(parameters["input_size"])] 
             
@@ -71,17 +80,20 @@ class NeuralNetwork():
             self.outputs = [NeuralNetwork.Neuron(parameters["number_of_hidden_nodes"], True) for i in range(parameters["output_size"])]
             self.loss = 0
         
+        #If the network has already been created, the values are passed into data and rebuilt here
         else:
             self.inputs = []
             self.hidden = []
             self.outputs = []
             self.cost = 0
-
+            
+            #Initialising input layer
             inputs = data["inputs"]
             for i in inputs:
                 new_neuron = NeuralNetwork.InputNeuron(i["value"], i["bias"])
                 self.inputs.append(new_neuron)
             
+            #Initialising hidden layers
             hidden = data["hidden"]
             for i in hidden:
               new_layer = []
@@ -91,7 +103,8 @@ class NeuralNetwork():
                   new_neuron.bias = j["bias"]
                   new_layer.append(new_neuron)
               self.hidden.append(new_layer)
-
+            
+            #Initialising output layer
             outputs = data["outputs"]
             for i in outputs:
                 new_neuron = NeuralNetwork.Neuron(10, True)
@@ -99,9 +112,6 @@ class NeuralNetwork():
                 new_neuron.value = i["value"]
                 new_neuron.bias = i["bias"]
                 self.outputs.append(new_neuron)
-
-            
-            self.loss = data["loss"]
         
     def FillInputVector(self, vector):
         """Setting the input layer equal to the vector passed into the function"""
@@ -111,6 +121,7 @@ class NeuralNetwork():
    ###################################################################################################################
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
+        #Initial hidden layer
         for i in self.hidden[0]:
             value = 0
             for c, j in enumerate(i.weights):
@@ -118,6 +129,7 @@ class NeuralNetwork():
             value = Sigmoid(value)
             i.value = value
 
+        #Hidden layer
         try:
            for pointer, i in enumerate(self.hidden):
                 for j in self.hidden[pointer + 1]:
@@ -129,6 +141,7 @@ class NeuralNetwork():
         except:
             pass
 
+        #Output layer
         for i in self.outputs:
             value = 0
             for c, j in enumerate(i.weights):
@@ -142,8 +155,10 @@ class NeuralNetwork():
 
 ############################################################################################################
     def CalculateCost(self, label):
-        """Loss is a measure of how well the neural network has performed on the given task"""
+        """Cost is a measure of how well the neural network has performed on the given task"""
         cost = 0
+        
+        #Cost here is the sum of the squares of the differences between outputs and truth
         for i in range(len(self.outputs)):
             if i == label:
                 cost += (self.outputs[i].value - 1)**2
