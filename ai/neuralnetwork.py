@@ -1,6 +1,13 @@
 import random
+import math
 import json
 """Refactor this"""
+
+def Sigmoid(x):
+    """Sigmoid Activation Function"""
+    return (1 + math.exp(x))**(-1)
+
+
 
 class NeuralNetwork():
     """A generic neural network object -> this comment block is horribly out of date and needs re-writing
@@ -68,7 +75,7 @@ class NeuralNetwork():
             self.inputs = []
             self.hidden = []
             self.outputs = []
-            self.loss = 0
+            self.cost = 0
 
             inputs = data["inputs"]
             for i in inputs:
@@ -96,61 +103,54 @@ class NeuralNetwork():
             
             self.loss = data["loss"]
         
-    def Relu(x):
-        """Relu activation function"""
-        return max(0, x)
-    
-    def Sigmoid(x):
-        """Sigmoid Activation Function"""
-        return (1 + math.exp(x))**(-1)
-
     def FillInputVector(self, vector):
         """Setting the input layer equal to the vector passed into the function"""
 
         for i in range(len(self.inputs)):
             self.inputs[i].value = vector[i] 
    ###################################################################################################################
-
-
-    def SumOfLayer(self, layer, sample, pointer):
-        """in the hidden cases, i is a list rather than a neuron and therefore has no weighted sum."""
-        for i in range(len(layer)):
-            if layer[i] in self.outputs:#Output layer
-                layer[i].WeightedSum(self.SumOfLayer(self.hidden, sample, -1)) 
-            elif layer[i] in self.inputs:#input layer
-                layer[i].SetValue(sample[i])
-            else: #if i in self.hidden
-                if pointer == -len(self.hidden):
-                     self.SumOfLayer(self.inputs, sample, None)
-                else:
-                     self.SumOfLayer(self.hidden[pointer - 1], sample, pointer - 1)
-                
-                for j in self.hidden[pointer]:
-                    if pointer != -len(self.hidden):
-                        j.WeightedSum(self.hidden[pointer - 1]) 
-                    else:
-                        j.WeightedSum(self.inputs)
-
-
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
-        self.SumOfLayer(self.outputs, sample, None)
+        for i in self.hidden[0]:
+            value = 0
+            for c, j in enumerate(i.weights):
+                value += j * self.inputs[c].value
+            value = Sigmoid(value)
+            i.value = value
+
+        try:
+           for pointer, i in enumerate(self.hidden):
+                for j in self.hidden[pointer + 1]:
+                    value = 0
+                    for c, k in enumerate(j.weights):
+                        value += k * i[c].value
+                    value = Sigmoid(value)
+                    j.value = value
+        except:
+            pass
+
+        for i in self.outputs:
+            value = 0
+            for c, j in enumerate(i.weights):
+                value += j * self.hidden[-1][c].value
+            value = Sigmoid(value)
+            i.value = value
+
         for i in self.outputs:
             print(i.value)
 
 
 ############################################################################################################
-    def CalculateLoss(self, label):
+    def CalculateCost(self, label):
         """Loss is a measure of how well the neural network has performed on the given task"""
-
-        loss = 0
+        cost = 0
         for i in range(len(self.outputs)):
             if i == label:
-                loss += (self.outputs[i].value - 1)**2
+                cost += (self.outputs[i].value - 1)**2
             else:
-                loss += (self.outputs[i])**2
-        self.loss = loss
-        return loss
+                cost += (self.outputs[i].value)**2
+        self.cost = cost
+        return cost
     
     def ToJSON(self): #Simple JSON serializer
         """Returns object rather than an object, this means that I have no way of calling class
