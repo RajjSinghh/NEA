@@ -130,26 +130,6 @@ class NeuralNetwork():
             i.WeightedSum(self.inputs)
             print(i.value)
 
-        
-        
-        #try:
-        #   for pointer, i in enumerate(self.hidden):
-        #        for j in self.hidden[pointer + 1]:
-        #            value = 0
-        #            for c, k in enumerate(j.weights):
-        #                value += k * i[c].value
-        #            value = Sigmoid(value)
-        #            j.value = value
-        #except:
-        #    pass
-
-        #for i in self.outputs:
-        #    value = 0
-        #    for c, j in enumerate(i.weights):
-        #        value += j * self.hidden[-1][c].value
-        #    value = Sigmoid(value)
-        #    i.value = value
-
         for pointer, i in enumerate(self.hidden[1:]):
             for j in i:
                 j.WeightedSum(self.hidden[pointer])
