@@ -1,11 +1,18 @@
 import random
+import time
 import math
 import json
-"""Refactor this"""
+"""Currently the sums are getting too big"""
 
 def Sigmoid(x):
     """Sigmoid Activation Function"""
-    return (1 + math.exp(x))**(-1)
+    try:
+        return (1 + math.exp(x))**(-1)
+    except OverflowError:
+        if x > 0:
+            return (1 + math.exp(float("inf")))**(-1)
+        else:
+            return (1 + math.exp(-float("inf")))**(-1)
 
 
 
@@ -47,10 +54,12 @@ class NeuralNetwork():
         
         def WeightedSum(self, previous_layer):
             #Calculates the weighted sum of a neuron by multiplying weights by the value in the neuron before
-            self.value = 0
-            for i in range(len(previous_layer)):
-                self.value += previous_layer[i].value * self.weights[i]
-            self.value += self.bias
+            value = 0
+            for count, i in enumerate(self.weights):
+                value += i * previous_layer[count].value
+            value += self.bias
+            self.value = Sigmoid(value)
+            print(self.value)
 
     def __init__(self, created, parameters, data): 
         """Creating the network structure"""
@@ -105,42 +114,52 @@ class NeuralNetwork():
         
     def FillInputVector(self, vector):
         """Setting the input layer equal to the vector passed into the function"""
-
-        for i in range(len(self.inputs)):
-            self.inputs[i].value = vector[i] 
-   ###################################################################################################################
+        for c, i in enumerate(vector):
+            self.inputs[c].SetValue(i)
+            print(self.inputs[c].value)
+    
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
+
+        #Set input vector
+        self.FillInputVector(sample)
+        time.sleep(15)
+
+        #Calculates sum of first hidden layer
         for i in self.hidden[0]:
-            value = 0
-            for c, j in enumerate(i.weights):
-                value += j * self.inputs[c].value
-            value = Sigmoid(value)
-            i.value = value
-
-        try:
-           for pointer, i in enumerate(self.hidden):
-                for j in self.hidden[pointer + 1]:
-                    value = 0
-                    for c, k in enumerate(j.weights):
-                        value += k * i[c].value
-                    value = Sigmoid(value)
-                    j.value = value
-        except:
-            pass
-
-        for i in self.outputs:
-            value = 0
-            for c, j in enumerate(i.weights):
-                value += j * self.hidden[-1][c].value
-            value = Sigmoid(value)
-            i.value = value
-
-        for i in self.outputs:
+            i.WeightedSum(self.inputs)
             print(i.value)
 
+        
+        
+        #try:
+        #   for pointer, i in enumerate(self.hidden):
+        #        for j in self.hidden[pointer + 1]:
+        #            value = 0
+        #            for c, k in enumerate(j.weights):
+        #                value += k * i[c].value
+        #            value = Sigmoid(value)
+        #            j.value = value
+        #except:
+        #    pass
 
-############################################################################################################
+        #for i in self.outputs:
+        #    value = 0
+        #    for c, j in enumerate(i.weights):
+        #        value += j * self.hidden[-1][c].value
+        #    value = Sigmoid(value)
+        #    i.value = value
+
+        for pointer, i in enumerate(self.hidden[1:]):
+            for j in i:
+                j.WeightedSum(self.hidden[pointer])
+
+        for i in self.outputs:
+            i.WeightedSum(self.hidden[-1])
+            print(i.value)
+    
+    ##################################################################################################################
+    
     def CalculateCost(self, label):
         """Loss is a measure of how well the neural network has performed on the given task"""
         cost = 0

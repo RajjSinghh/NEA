@@ -82,7 +82,8 @@ def Train():
 
     vector = []
     for i in training_images[1]:
-        vector.append(i)
+        for j in i:
+            vector.append(j)
 
     TrainOnSingleData(network, vector, training_labels[1])
 
