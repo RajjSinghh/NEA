@@ -107,9 +107,9 @@ class NeuralNetwork():
             #Initialising output layer
             outputs = data["outputs"]
             for i in outputs:
-                new_neuron = NeuralNetwork.Neuron(10, True)
-                new_neuron.weights = i["weights"]
-                new_neuron.value = i["value"]
+                    new_neuron = NeuralNetwork.Neuron(10, True)
+                    new_neuron.weights = i["weights"]
+                    new_neuron.value = i["value"]
                 new_neuron.bias = i["bias"]
                 self.outputs.append(new_neuron)
         
@@ -118,7 +118,7 @@ class NeuralNetwork():
 
         for i in range(len(self.inputs)):
             self.inputs[i].value = vector[i] 
-   ###################################################################################################################
+    
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
         #Initial hidden layer
@@ -152,20 +152,26 @@ class NeuralNetwork():
         for i in self.outputs:
             print(i.value)
 
-
-############################################################################################################
     def CalculateCost(self, label):
         """Cost is a measure of how well the neural network has performed on the given task"""
         cost = 0
-        
+
+        print(label)
+        errors = [] 
         #Cost here is the sum of the squares of the differences between outputs and truth
         for i in range(len(self.outputs)):
             if i == label:
-                cost += (self.outputs[i].value - 1)**2
+                cost += (1 - self.outputs[i].value)**2
+                errors.append((self.outputs[i].value - 1)**2)
             else:
                 cost += (self.outputs[i].value)**2
-        self.cost = cost
-        return cost
+                errors.append((self.outputs[i].value)**2)
+        self.cost = cost / len(self.outputs)
+        print("--------------------")
+        print("Errors")
+        for i in errors:
+            print(i)
+        return errors
     
     def ToJSON(self): #Simple JSON serializer
         """Returns object rather than an object, this means that I have no way of calling class
