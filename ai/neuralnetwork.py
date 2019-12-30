@@ -51,6 +51,7 @@ class NeuralNetwork():
         def __init__(self, number_of_prev_nodes, output):
            super().__init__()
            self.weights = []
+           self.bias = random.random()
            for i in range(number_of_prev_nodes):
                self.weights.append(random.uniform(-2, 2))
                    
