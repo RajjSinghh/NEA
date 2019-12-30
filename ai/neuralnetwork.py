@@ -6,6 +6,16 @@ def Sigmoid(x):
     """Sigmoid Activation Function"""
     return (1 + math.exp(x))**(-1)
 
+def Softmax(v):
+    """softmax takes a vector and returns that vector as a probability distribution"""
+    denominator = 0
+    for i in v:
+        denominator += math.e**i
+    output = []
+    for i in v:
+        output.append((math.e**i) / denominator)
+    return output
+
 class NeuralNetwork():
     """A generic neural network object -> this comment block is horribly out of date and needs re-writing
     -----------------------------------------------------------------
@@ -107,9 +117,9 @@ class NeuralNetwork():
             #Initialising output layer
             outputs = data["outputs"]
             for i in outputs:
-                    new_neuron = NeuralNetwork.Neuron(10, True)
-                    new_neuron.weights = i["weights"]
-                    new_neuron.value = i["value"]
+                new_neuron = NeuralNetwork.Neuron(10, True)
+                new_neuron.weights = i["weights"]
+                new_neuron.value = i["value"]
                 new_neuron.bias = i["bias"]
                 self.outputs.append(new_neuron)
         
@@ -118,7 +128,7 @@ class NeuralNetwork():
 
         for i in range(len(self.inputs)):
             self.inputs[i].value = vector[i] 
-    
+   
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
         #Initial hidden layer
@@ -142,12 +152,16 @@ class NeuralNetwork():
             pass
 
         #Output layer
+        sum_vector = []
         for i in self.outputs:
             value = 0
             for c, j in enumerate(i.weights):
                 value += j * self.hidden[-1][c].value
-            value = Sigmoid(value)
-            i.value = value
+            sum_vector.append(value)
+        
+        output_vector = Softmax(sum_vector)
+        for c, i in enumerate(self.outputs):
+            i.value = output_vector[c]
 
         for i in self.outputs:
             print(i.value)
