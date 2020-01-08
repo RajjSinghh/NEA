@@ -168,25 +168,20 @@ class NeuralNetwork():
             print(i.value)
 
     def CalculateCost(self, label):
-        """Cost is a measure of how well the neural network has performed on the given task"""
-        cost = 0
+        """Cost is a measure of how well the neural network has performed on the given task
+           Since our network is a classifier outputting a probability distrobution, this is
+           measured using cross entropy (log loss) defined as 
 
-        print(label)
-        errors = [] 
-        #Cost here is the sum of the squares of the differences between outputs and truth
-        for i in range(len(self.outputs)):
-            if i == label:
-                cost += (1 - self.outputs[i].value)**2
-                errors.append((self.outputs[i].value - 1)**2)
-            else:
-                cost += (self.outputs[i].value)**2
-                errors.append((self.outputs[i].value)**2)
-        self.cost = cost / len(self.outputs)
-        print("--------------------")
-        print("Errors")
-        for i in errors:
-            print(i)
-        return errors
+           -sum(x in X) p(x)ln(q(x))
+
+           but since p is a 1-hot encoded vector, this simplifies to 
+
+           -ln(q(x))
+        """
+        cost = -math.log(self.outputs[label].value)
+        print(cost)
+        self.cost = cost
+        return cost
     
     def ToJSON(self): #Simple JSON serializer
         """Returns object rather than an object, this means that I have no way of calling class

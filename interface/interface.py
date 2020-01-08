@@ -5,21 +5,23 @@ class MainWindow(tk.Frame):
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)
         self.master = master
-        
         self.InitWindow()
+        child = None
 
     def InitWindow(self):
         self.master.title("Main Screen")
         self.pack()
 
-        mark = tk.Button(self, text="Mark", command=lambda:[CreateMarkWindow(self)]) #Create new window
+        mark = tk.Button(self, text="Mark", command=lambda:[self.destroy, self.NewMarkWindow()]) #Create new window
         close = tk.Button(self, text="Quit", command=quit)
         details = tk.Button(self, text="Details", command=lambda:[print("hello world")])
         
         mark.pack()
         details.pack()
         close.pack()
-
+    
+    def NewMarkWindow(self):
+        self.child = MarkWindow(self)
 
 class MarkWindow(tk.Frame):
     def __init__(self, master):
@@ -37,16 +39,26 @@ class MarkWindow(tk.Frame):
         submit_button.pack()
     
     def LoadFile(self, file_path):
+        if file_path[-4:].lower() not in [".png", ".jpg"]:
+            self.FileTypeError()
         try:
             with open(file_path, "r") as file:
                 data = file.read()
             print(data)
         except:
-            print("This file is not present, please try again")
+            print("This file is not present, please try again")#replace with better exception
+
+    def FileTypeError(self):
+        window = tk.Tk()
+        window.geometry("600x100")
+        label = tk.Label(master=window, text="Invalid file type, must be JPG or PNG")
+        label.pack()
+        confirm = tk.Button(master=window, text="Okay", command=window.destroy)
+        confirm.pack()
 
 
 if __name__ == '__main__':
     root = tk.Tk()
     root.geometry("400x300")
-    window = MarkWindow(root)
+    window = MainWindow(root)
     root.mainloop()
