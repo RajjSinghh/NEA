@@ -86,10 +86,10 @@ def Train():
     
     #Converting Numpy array to list
     vector = []
-    for i in training_images[1]:
+    for i in training_images[3]:
         vector.append(i)
     #Runs training algorithm on single piece of data
-    TrainOnSingleData(network, vector, training_labels[1])
+    TrainOnSingleData(network, vector, training_labels[3])
 
 def TrainOnSingleData(network, vector, label):
     """Training on a single point of data, helper function for Train"""

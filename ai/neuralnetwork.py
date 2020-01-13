@@ -6,6 +6,16 @@ def Sigmoid(x):
     """Sigmoid Activation Function"""
     return (1 + math.exp(x))**(-1)
 
+def Softmax(v):
+    """softmax takes a vector and returns that vector as a probability distribution"""
+    denominator = 0
+    for i in v:
+        denominator += math.e**i
+    output = []
+    for i in v:
+        output.append((math.e**i) / denominator)
+    return output
+
 class NeuralNetwork():
     """A generic neural network object -> this comment block is horribly out of date and needs re-writing
     -----------------------------------------------------------------
@@ -41,6 +51,7 @@ class NeuralNetwork():
         def __init__(self, number_of_prev_nodes, output):
            super().__init__()
            self.weights = []
+           self.bias = random.random()
            for i in range(number_of_prev_nodes):
                self.weights.append(random.uniform(-2, 2))
                    
@@ -118,7 +129,7 @@ class NeuralNetwork():
 
         for i in range(len(self.inputs)):
             self.inputs[i].value = vector[i] 
-   ###################################################################################################################
+   
     def ForwardPass(self, sample):
         """Calculating the output vector from the input vector, has to be run after inputs are defined"""
         #Initial hidden layer
@@ -142,28 +153,33 @@ class NeuralNetwork():
             pass
 
         #Output layer
+        sum_vector = []
         for i in self.outputs:
             value = 0
             for c, j in enumerate(i.weights):
                 value += j * self.hidden[-1][c].value
-            value = Sigmoid(value)
-            i.value = value
+            sum_vector.append(value)
+        
+        output_vector = Softmax(sum_vector)
+        for c, i in enumerate(self.outputs):
+            i.value = output_vector[c]
 
         for i in self.outputs:
             print(i.value)
 
-
-############################################################################################################
     def CalculateCost(self, label):
-        """Cost is a measure of how well the neural network has performed on the given task"""
-        cost = 0
-        
-        #Cost here is the sum of the squares of the differences between outputs and truth
-        for i in range(len(self.outputs)):
-            if i == label:
-                cost += (self.outputs[i].value - 1)**2
-            else:
-                cost += (self.outputs[i].value)**2
+        """Cost is a measure of how well the neural network has performed on the given task
+           Since our network is a classifier outputting a probability distrobution, this is
+           measured using cross entropy (log loss) defined as 
+
+           -sum(x in X) p(x)ln(q(x))
+
+           but since p is a 1-hot encoded vector, this simplifies to 
+
+           -ln(q(x))
+        """
+        cost = -math.log(self.outputs[label].value)
+        print(cost)
         self.cost = cost
         return cost
     
