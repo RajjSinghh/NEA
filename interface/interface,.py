@@ -8,6 +8,9 @@ class MenuWindow(tk.Tk):
 		welcome.pack()
 		mark = tk.Button(self, text="Mark Work", command=lambda:MarkWindow())
 		mark.pack()
+		
+		self.quit = tk.Button(self, text="Quit", command=self.destroy)
+		self.quit.pack()
 
 class MarkWindow(tk.Tk):
 	def __init__(self):	
@@ -27,8 +30,8 @@ class EntryWindow(tk.Tk):
 	
 	def ValidateEntry(self):
 		text = self.entry.get()
-		print(text)
-		if text[-4] not in {".png", ".jpg", ".gif"}:
+		print(text[-4])
+		if text[-4:] not in [".png", ".jpg", ".gif"]:
 			self.error = ErrorWindow("Not a supported file type")
 		
 class ErrorWindow(tk.Tk):
