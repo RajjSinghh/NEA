@@ -16,7 +16,10 @@ class MarkWindow(tk.Tk):
 	def __init__(self):	
 		super().__init__()
 		self.entry = EntryWindow()
+		self.file_path = self.entry.text
 		
+		##Add a display using matplotlib or cv2?
+		##Poll entry window for text and if text != none, destroy entry
 
 class EntryWindow(tk.Tk):
 	def __init__(self):
@@ -30,9 +33,18 @@ class EntryWindow(tk.Tk):
 	
 	def ValidateEntry(self):
 		text = self.entry.get()
+		flag = False
 		print(text[-4])
 		if text[-4:] not in [".png", ".jpg", ".gif"]:
 			self.error = ErrorWindow("Not a supported file type")
+		else:
+			try:
+				with open(text, "r") as file:
+					flag = True
+			except FileNotFoundError:
+				self.error = ErrorWindow("This file does not exist")
+		if flag:
+			self.text = text
 		
 class ErrorWindow(tk.Tk):
 	def __init__(self, message):
