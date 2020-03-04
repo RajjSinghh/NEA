@@ -21,7 +21,12 @@ class NeuralNetwork():
     -----------------------------------------------------------------
     VARIABLE LIST
     -----------------------------------------------------------------
+    ---Parameters that are passed into __init__---
+    created - a boolean value to say whether the neural network has been created or not
+    parameters - If the neural network has not been created, these are the dimensions of the network
+    data - If the neural network has been created, this is the data pulled from the json file
     
+    Both data and parameters are passed into the __init__ function as dictionaries
     -----------------------------------------------------------------
     """
     class InputNeuron:
