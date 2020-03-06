@@ -1,4 +1,10 @@
 import tkinter as tk
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+from matplotlib.figure import Figure
+from preprocessing import *
 
 class MenuWindow(tk.Tk):
 	def __init__(self):
@@ -17,9 +23,24 @@ class MarkWindow(tk.Tk):
 		super().__init__()
 		self.entry = EntryWindow()
 		self.file_path = self.entry.text
-		
+		self.load = tk.Button(self, text="load image", command=self.GetEntryText)
+		self.load.pack()
+		self.text = ""
+		self.image = None
+		self.threshold = None
 		##Add a display using matplotlib or cv2?
 		##Poll entry window for text and if text != none, destroy entry
+	
+	def GetEntryText(self):
+		self.text = self.entry.text
+		print(self.text)
+		self.Display()
+	
+	def Display(self):
+		x, self.image, self,threshold = ImageLoader(self.text)###
+		plt.load(self.image)
+		plt.show()
+		plt.get_tk_widget().pack()
 
 class EntryWindow(tk.Tk):
 	def __init__(self):
@@ -30,7 +51,8 @@ class EntryWindow(tk.Tk):
 		self.entry.pack()
 		self.submit = tk.Button(self, text="Submit", command=self.ValidateEntry)
 		self.submit.pack()
-	
+		self.text = ""
+
 	def ValidateEntry(self):
 		text = self.entry.get()
 		flag = False
