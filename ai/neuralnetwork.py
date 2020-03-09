@@ -2,10 +2,6 @@ import random
 import time
 import math
 import json
-<<<<<<< HEAD
-=======
-"""Currently the sums are getting too big"""
->>>>>>> develop
 
 def Sigmoid(x):
     """Sigmoid Activation Function"""
@@ -74,13 +70,6 @@ class NeuralNetwork():
            self.output = output #Boolean to see if is in output layer
         
         def WeightedSum(self, previous_layer):
-<<<<<<< HEAD
-            """Calculates the value of the the neuron based on the previous layer"""
-            self.value = 0
-            for i in range(len(previous_layer)):
-                self.value += previous_layer[i].value * self.weights[i]
-            self.value += self.bias
-=======
             #Calculates the weighted sum of a neuron by multiplying weights by the value in the neuron before
             value = 0
             for count, i in enumerate(self.weights):
@@ -88,7 +77,6 @@ class NeuralNetwork():
             value += self.bias
             self.value = Sigmoid(value)
             print(self.value)
->>>>>>> develop
 
     def __init__(self, created, parameters, data): 
         """Creating the network structure
@@ -152,15 +140,6 @@ class NeuralNetwork():
         
     def FillInputVector(self, vector):
         """Setting the input layer equal to the vector passed into the function"""
-<<<<<<< HEAD
-
-        for i in range(len(self.inputs)):
-            self.inputs[i].value = vector[i] 
-   
-    def ForwardPass(self, sample):
-        """Calculating the output vector from the input vector, has to be run after inputs are defined"""
-        #Initial hidden layer
-=======
         for c, i in enumerate(vector):
             self.inputs[c].SetValue(i)
             print(self.inputs[c].value)
@@ -173,12 +152,10 @@ class NeuralNetwork():
         time.sleep(15)
 
         #Calculates sum of first hidden layer
->>>>>>> develop
         for i in self.hidden[0]:
             i.WeightedSum(self.inputs)
             print(i.value)
 
-<<<<<<< HEAD
         #Hidden layer
         try:
            for pointer, i in enumerate(self.hidden):
@@ -202,8 +179,6 @@ class NeuralNetwork():
         output_vector = Softmax(sum_vector)
         for c, i in enumerate(self.outputs):
             i.value = output_vector[c]
-=======
-        
         
         #try:
         #   for pointer, i in enumerate(self.hidden):
@@ -223,22 +198,11 @@ class NeuralNetwork():
         #    value = Sigmoid(value)
         #    i.value = value
 
-        for pointer, i in enumerate(self.hidden[1:]):
-            for j in i:
-                j.WeightedSum(self.hidden[pointer])
->>>>>>> develop
-
         for i in self.outputs:
             i.WeightedSum(self.hidden[-1])
             print(i.value)
-<<<<<<< HEAD
-
-=======
     
-    ##################################################################################################################
-    
->>>>>>> develop
-    def CalculateCost(self, label):
+     def CalculateCost(self, label):
         """Cost is a measure of how well the neural network has performed on the given task
            Since our network is a classifier outputting a probability distrobution, this is
            measured using cross entropy (log loss) defined as 

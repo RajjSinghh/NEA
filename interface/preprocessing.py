@@ -2,14 +2,14 @@ import numpy
 import matplotlib.pyplot as plt
 import cv2
 
-def ImageLoader(file_name):
+def ImageLoader(file_name): #MUST TRACK COLOR AND GENERATE GREY IMAGE
 	"""Loading an image file using opencv"""
 	image = cv2.imread(file_name)
 	imgray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	retval, threshold = cv2.threshold(imgray, 254, 255, 0)
 	return imgray, threshold
 
-def FindDigits(image, threshold):
+def FindDigits(image, threshold):#CONTOURING MUST BE DONE FROM GRAY IMAGE THEN DRAWN TO COLOR
 	"""Finding characters in an image using opencv contours"""
 	#contours are sets in opencv to find a given set of pixels in an image
 	#after finding contours, we can outline each set of points as a closed shape
