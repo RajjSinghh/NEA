@@ -2,23 +2,21 @@ import numpy
 import matplotlib.pyplot as plt
 import cv2
 
-def ImageLoader(file_name): #MUST TRACK COLOR AND GENERATE GREY IMAGE
+def ImageLoader(file_name): 
 	"""Loading an image file using opencv"""
-	image = cv2.imread(file_name)
-	imgray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	retval, threshold = cv2.threshold(imgray, 254, 255, 0)
-	return imgray, threshold
+	image = cv2.imread(file_name, cv2.IMREAD_COLOR)
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	return image, gray
 
-def FindDigits(image, threshold):#CONTOURING MUST BE DONE FROM GRAY IMAGE THEN DRAWN TO COLOR
+def FindDigits(colour, grayscale):
 	"""Finding characters in an image using opencv contours"""
 	#contours are sets in opencv to find a given set of pixels in an image
 	#after finding contours, we can outline each set of points as a closed shape
-	contours, hierarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-	cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
-	print(contours[0])
-	print(contours[0][0])
-	print(contours[0][0][0])
-	return image, contours
+	
+	retval, threshold = cv2.threshold(grayscale, 200, 255, cv2.THRESH_BINARY_INV)
+	contours, heirarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+	cv2.drawContours(colour, contours, -1, (255, 0, 0), 0)
+	return colour, grayscale, contours
 
 def BoxImage(image, contours):
 	"""Cut out the digit from an image based on its contours"""
@@ -38,10 +36,10 @@ def BoxImage(image, contours):
 			print(i)
 
 if __name__ == '__main__':
-	test_image, threshold = ImageLoader("Math_Meme-1.png")
-	print(type(test_image))
-	test_image, contours = FindDigits(test_image, threshold)
-	BoxImage(test_image, contours[0])
-	cv2.imshow("test", test_image)
+	colour, grayscale = ImageLoader("Math_Meme-1.png")
+	FindDigits(colour, grayscale)
+	cv2.imshow("color", colour)
+	cv2.imshow("grayscale", grayscale)
 	cv2.waitKey(0)
-	cv2.destroyAllWindows()
+	cv2.destroyAllWindows
+
