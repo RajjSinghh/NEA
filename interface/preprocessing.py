@@ -5,8 +5,9 @@ import cv2
 def ImageLoader(file_name): 
 	"""Loading an image file using opencv"""
 	image = cv2.imread(file_name, cv2.IMREAD_COLOR)
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	return image, gray
+	#gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	#return image, gray
+	return image
 
 def FindDigits(colour, grayscale):
 	"""Finding characters in an image using opencv contours"""
@@ -35,12 +36,12 @@ def NormaliseDigit(image, contour):
 
 	##TODO Finish troubleshooting this image slicing system and begin work on a 
 	##translation and scaling system
-	print(top_left)
-	print(bottom_right)
-	print(image[top_left[0] : bottom_right[0], top_left[1] : bottom_right[1] ])
-	cv2.imshow("mat", image[[top_left[0]:bottom_right[0]] [top_left[1]:bottom_right[1]]])
-	cv2.waitKeyPressed(0)
-	cv2.destroyAllWindows()
+#	print(top_left)
+#	print(bottom_right)
+#	print(image[top_left[0] : bottom_right[0], top_left[1] : bottom_right[1] ])
+#	cv2.imshow("mat", image[[top_left[0]:bottom_right[0]] [top_left[1]:bottom_right[1]]])
+#	cv2.waitKeyPressed(0)
+#	cv2.destroyAllWindows()
 		
 
 if __name__ == '__main__':
