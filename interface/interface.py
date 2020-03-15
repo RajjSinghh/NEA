@@ -1,64 +1,81 @@
 import tkinter as tk
-"""Need to learn how to use multi-window object orientation properly"""
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+from matplotlib.figure import Figure
+from preprocessing import *
 
-class MainWindow(tk.Frame):
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
-        self.master = master
-        self.InitWindow()
-        child = None
+class MenuWindow(tk.Tk):
+	def __init__(self):
+		super().__init__()
+		self.geometry = ("600x400")
+		welcome = tk.Label(self, text="Welcome to the AI Marking System")
+		welcome.pack()
+		mark = tk.Button(self, text="Mark Work", command=lambda:MarkWindow())
+		mark.pack()
+		
+		self.quit = tk.Button(self, text="Quit", command=self.destroy)
+		self.quit.pack()
 
-    def InitWindow(self):
-        self.master.title("Main Screen")
-        self.pack()
+class MarkWindow(tk.Tk):
+	def __init__(self):	
+		super().__init__()
+		self.entry = EntryWindow()
+		self.file_path = self.entry.text
+		self.load = tk.Button(self, text="load image", command=self.GetEntryText)
+		self.load.pack()
+		self.text = ""
+		self.image = None
+		self.threshold = None
+		##Add a display using matplotlib or cv2?
+		##Poll entry window for text and if text != none, destroy entry
+	
+	def GetEntryText(self):
+		self.text = self.entry.text
+		print(self.text)
+		self.Display()
+	
+	def Display(self):
+		x, self.image, self,threshold = ImageLoader(self.text)###
+		plt.load(self.image)
+		plt.show()
+		plt.get_tk_widget().pack()
 
-        mark = tk.Button(self, text="Mark", command=lambda:[self.destroy, self.NewMarkWindow()]) #Create new window
-        close = tk.Button(self, text="Quit", command=quit)
-        details = tk.Button(self, text="Details", command=lambda:[print("hello world")])
-        
-        mark.pack()
-        details.pack()
-        close.pack()
-    
-    def NewMarkWindow(self):
-        self.child = MarkWindow(self)
+class EntryWindow(tk.Tk):
+	def __init__(self):
+		super().__init__()
+		prompt = tk.Label(self, text="Enter the file name you are looking for")
+		self.entry = tk.Entry(self)
+		prompt.pack()
+		self.entry.pack()
+		self.submit = tk.Button(self, text="Submit", command=self.ValidateEntry)
+		self.submit.pack()
+		self.text = ""
 
-class MarkWindow(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        self.master = master
-        self.InitWindow()
-
-    def InitWindow(self):
-        prompt = tk.Label(text="Enter the name of the file you want marked")
-        prompt.pack()
-
-        file_entry = tk.Entry(self.master)
-        submit_button = tk.Button(self.master, text="Find File", command=lambda:[self.LoadFile(file_entry.get())])
-        file_entry.pack()
-        submit_button.pack()
-    
-    def LoadFile(self, file_path):
-        if file_path[-4:].lower() not in [".png", ".jpg"]:
-            self.FileTypeError()
-        try:
-            with open(file_path, "r") as file:
-                data = file.read()
-            print(data)
-        except:
-            print("This file is not present, please try again")#replace with better exception
-
-    def FileTypeError(self):
-        window = tk.Tk()
-        window.geometry("600x100")
-        label = tk.Label(master=window, text="Invalid file type, must be JPG or PNG")
-        label.pack()
-        confirm = tk.Button(master=window, text="Okay", command=window.destroy)
-        confirm.pack()
-
+	def ValidateEntry(self):
+		text = self.entry.get()
+		flag = False
+		print(text[-4])
+		if text[-4:] not in [".png", ".jpg", ".gif"]:
+			self.error = ErrorWindow("Not a supported file type")
+		else:
+			try:
+				with open(text, "r") as file:
+					flag = True
+			except FileNotFoundError:
+				self.error = ErrorWindow("This file does not exist")
+		if flag:
+			self.text = text
+		
+class ErrorWindow(tk.Tk):
+	def __init__(self, message):
+		super().__init__()
+		self.label = tk.Label(self, text=message)
+		self.label.pack()
+		self.close = tk.Button(self, text="Close", command=self.destroy)
+		self.close.pack()
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.geometry("400x300")
-    window = MainWindow(root)
-    root.mainloop()
+	main_menu = MenuWindow()
+	tk.mainloop()
