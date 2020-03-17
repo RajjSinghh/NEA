@@ -26,21 +26,18 @@ class MarkWindow(tk.Tk):
 		self.load = tk.Button(self, text="load image", command=self.GetEntryText)
 		self.load.pack()
 		self.text = ""
-		self.image = None
-		self.threshold = None
 		##Add a display using matplotlib or cv2?
 		##Poll entry window for text and if text != none, destroy entry
 	
 	def GetEntryText(self):
 		self.text = self.entry.text
-		print(self.text)
 		self.Display()
 	
 	def Display(self):
-		x, self.image, self,threshold = ImageLoader(self.text)###
-		plt.load(self.image)
+		self.image = cv2.imread(self.text, cv2.IMREAD_COLOR)
+		plt.imshow(self.image, cmap="gray", interpolation='bicubic')
 		plt.show()
-		plt.get_tk_widget().pack()
+		cv2.imshow("image", self.image)
 
 class EntryWindow(tk.Tk):
 	def __init__(self):
@@ -54,9 +51,8 @@ class EntryWindow(tk.Tk):
 		self.text = ""
 
 	def ValidateEntry(self):
-		text = self.entry.get()
+		text = "bin/" + self.entry.get()
 		flag = False
-		print(text[-4])
 		if text[-4:] not in [".png", ".jpg", ".gif"]:
 			self.error = ErrorWindow("Not a supported file type")
 		else:

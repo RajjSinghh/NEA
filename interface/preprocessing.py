@@ -21,7 +21,7 @@ def FindDigits(colour, grayscale):
 		reshaped_contours.append(numpy.reshape(i, (len(contours), 2)))
 
 	print(contours[0])
-	print(contours[contours[0].shape)
+	print(contours[contours[0].shape])
 	return colour, grayscale, contours
 
 #def NormaliseDigit(image, contour):
