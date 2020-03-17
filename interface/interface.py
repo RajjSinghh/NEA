@@ -1,9 +1,6 @@
 import tkinter as tk
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
-from matplotlib.figure import Figure
 from preprocessing import *
 
 class MenuWindow(tk.Tk):
@@ -35,6 +32,8 @@ class MarkWindow(tk.Tk):
 	
 	def Display(self):
 		self.image = cv2.imread(self.text, cv2.IMREAD_COLOR)
+		self.image_grayscale = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+		self.image, self.image_grayscale, self.contours = FindDigits(self.image, self.image_grayscale)
 		plt.imshow(self.image, cmap="gray", interpolation='bicubic')
 		plt.show()
 		cv2.imshow("image", self.image)

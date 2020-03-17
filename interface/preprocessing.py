@@ -16,12 +16,6 @@ def FindDigits(colour, grayscale):
 	retval, threshold = cv2.threshold(grayscale, 200, 255, cv2.THRESH_BINARY_INV)
 	contours, heirarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 	cv2.drawContours(colour, contours, -1, (255, 0, 0), 0)
-	reshaped_contours = []
-	for i in contours:
-		reshaped_contours.append(numpy.reshape(i, (len(contours), 2)))
-
-	print(contours[0])
-	print(contours[contours[0].shape])
 	return colour, grayscale, contours
 
 #def NormaliseDigit(image, contour):
