@@ -36,7 +36,6 @@ class MarkWindow(tk.Tk):
 		self.image, self.image_grayscale, self.contours = FindDigits(self.image, self.image_grayscale)
 		plt.imshow(self.image, cmap="gray", interpolation='bicubic')
 		plt.show()
-		cv2.imshow("image", self.image)
 
 class EntryWindow(tk.Tk):
 	def __init__(self):
