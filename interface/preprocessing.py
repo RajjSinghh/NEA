@@ -2,12 +2,6 @@ import numpy
 import matplotlib.pyplot as plt
 import cv2
 
-def ImageLoader(file_name): 
-	"""Loading an image file using opencv"""
-	image = cv2.imread(file_name, cv2.IMREAD_COLOR)
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	return image, gray
-
 def FindDigits(colour, grayscale):
 	"""Finding characters in an image using opencv contours"""
 	#contours are sets in opencv to find a given set of pixels in an image
