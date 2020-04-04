@@ -23,6 +23,8 @@ class MarkWindow(tk.Tk):
 		self.load = tk.Button(self, text="load image", command=self.GetEntryText)
 		self.load.pack()
 		self.text = ""
+		self.image = None
+		self.threshold = None
 		##Add a display using matplotlib or cv2?
 		##Poll entry window for text and if text != none, destroy entry
 	
@@ -51,6 +53,7 @@ class EntryWindow(tk.Tk):
 	def ValidateEntry(self):
 		text = "bin/" + self.entry.get()
 		flag = False
+		
 		if text[-4:] not in [".png", ".jpg", ".gif"]:
 			self.error = ErrorWindow("Not a supported file type")
 		else:
