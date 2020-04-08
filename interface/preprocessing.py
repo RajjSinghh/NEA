@@ -43,13 +43,9 @@ if __name__ == '__main__':
 		sample = grayscale[y:y+h,x:x+w]
 		sample = cv2.bitwise_not(sample)
 		print(sample.shape)
-		try:
-			sample.reshape(28, 28) ##Replace with appropriate slicing of image	
-			plt.imshow(sample)
-			plt.show()
-		except:
-			pass	
-
+		sample = cv2.resize(sample, (28, 28))	
+		plt.imshow(sample)
+		plt.show()
 
 	#print(contours[0].shape)
 	#NormaliseDigit(image, contours[0])
