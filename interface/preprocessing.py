@@ -14,8 +14,8 @@ def FindDigits(image, grayscale):
 def DetectLines(contours):
 	"""Function to change contours to sets of sorted lines"""	
 	c = []
-	cnt_left = len(contours)
-	while cnt_left > 0:
+	cnt_left = contours
+	while cnt_left:
 		new_line = []
 		for cnt in reversed(contours):
 			temp = cnt.reshape((len(cnt), 2))
@@ -28,10 +28,11 @@ def DetectLines(contours):
 					break
 				else:
 					new_line.append(cnt)
-			cnt_left -= 1
+			cnt_left.pop()
+	c.append(new_line)
 	return c
 
-	##TODO Finish line detection, c should be a list of lists of lines
+	##TODO outer loop is running too much
 
 if __name__ == '__main__':
 	image = cv2.imread('bin/printed.jpg')
