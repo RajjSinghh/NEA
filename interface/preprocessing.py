@@ -11,6 +11,23 @@ def FindDigits(image, grayscale):
 #	cv2.drawContours(image, contours, -1, (255, 0, 0), 0)
 	return image, grayscale, contours
 
+def QuickSort(lst, low, high, key=lambda x:x):
+	if low < high:
+		p = Partition(lst, low, high, key)
+		QuickSort(lst, low, p - 1)
+		QuickSort(lst, p + 1, high)
+
+def Partition(lst, low, high, key):
+	pivot = key(lst[high])
+	i = low
+	for j in range(low, high + 1):
+		if key(lst[j]) < pivot:
+			lst[i], lst[j] = lst[j], lst[i]
+			i += 1
+	lst[i], lst[high] = lst[high], lst[i]
+	return i
+		
+
 def DetectLines(contours):
 	"""Function to change contours to sets of sorted lines"""	
 	c = []
@@ -32,44 +49,47 @@ def DetectLines(contours):
 	c.append(new_line)
 	return c
 
-	##TODO outer loop is running too much
-
 if __name__ == '__main__':
-	image = cv2.imread('bin/printed.jpg')
-	grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	image, grayscale, contours = FindDigits(image, grayscale)
-#	print(grayscale)
-#	plt.imshow(grayscale)
-#	plt.show()
-#	for cnt in contours:
-#		x, y, w, h = cv2.boundingRect(cnt)
-#		#cv2.rectangle(grayscale, (x, y), (x+w, y+h), (0, 255, 0), 2)
-#		sample = grayscale[y-1:y+h+1,x-1:x+w+1]
-#		sample = cv2.bitwise_not(sample)
-#		print(sample.shape)
-#		sample = cv2.resize(sample, (28, 28))	
-#		plt.imshow(sample)
-#		plt.show()
-#	
-#	contours = reversed(contours)
-#	x = []
+#	image = cv2.imread('bin/printed.jpg')
+#	grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#	image, grayscale, contours = FindDigits(image, grayscale)
+##	print(grayscale)
+##	plt.imshow(grayscale)
+##	plt.show()
+##	for cnt in contours:
+##		x, y, w, h = cv2.boundingRect(cnt)
+##		#cv2.rectangle(grayscale, (x, y), (x+w, y+h), (0, 255, 0), 2)
+##		sample = grayscale[y-1:y+h+1,x-1:x+w+1]
+##		sample = cv2.bitwise_not(sample)
+##		print(sample.shape)
+##		sample = cv2.resize(sample, (28, 28))	
+##		plt.imshow(sample)
+##		plt.show()
+##	
+##	contours = reversed(contours)
+##	x = []
+##	img = image
+##	for cnt in contours:
+##		x.append(cnt)
+##		cv2.drawContours(img, x, -1, (255, 0, 0), 0)
+##		plt.imshow(img)
+##		plt.show()
+##
+#
+##	print(contours)
 #	img = image
-#	for cnt in contours:
-#		x.append(cnt)
-#		cv2.drawContours(img, x, -1, (255, 0, 0), 0)
+#	cont = DetectLines(contours)
+#	print(len(cont))
+#	for ln in cont:
+#		img = cv2.drawContours(img,ln, -1, (0, 255, 0), 0)
 #		plt.imshow(img)
 #		plt.show()
+#	cv2.imshow("grayscale", grayscale)
+#	cv2.waitKey(0)
+#	cv2.destroyAllWindows()
 #
 
-#	print(contours)
-	img = image
-	cont = DetectLines(contours)
-	print(len(cont))
-	for ln in cont:
-		img = cv2.drawContours(img,ln, -1, (0, 255, 0), 0)
-		plt.imshow(img)
-		plt.show()
-#	cv2.imshow("grayscale", grayscale)
-	cv2.waitKey(0)
-	cv2.destroyAllWindows()
-
+	import random
+	x =[[random.randint(0, 10) for i in range(3) ] for i in range(3)]
+	QuickSort(x, 0, len(x) -1, key=lambda y:y[-1])
+	print(x)
