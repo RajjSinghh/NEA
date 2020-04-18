@@ -27,6 +27,24 @@ def Partition(lst, low, high, key):
 	lst[i], lst[high] = lst[high], lst[i]
 	return i
 		
+def EraseInner(contours, image):
+	for line in contours:
+		for index, contour in enumerate(line[:len(line)-2]):	
+			x, y, w, h = cv2.boundingRect(contour)
+			initial = [x, y, w, h]
+			x, y, w, h = cv2.boundingRect(contours[index + 1])
+			next_val = [x, y, w, h]
+
+			if range(next_val[0],next_val[0] + next_val[2]) in range(initial[0], initial[0] + initial[2]):
+				line.pop(index + 1)
+
+			#cv2.rectangle(grayscale, (x, y), (x+w, y+h), (0, 255, 0), 2)
+			sample = grayscale[y-1:y+h+1,x-1:x+w+1]
+			sample = cv2.bitwise_not(sample)
+			print(sample.shape)
+			sample = cv2.resize(sample, (28, 28))	
+			plt.imshow(sample)
+			plt.show()
 
 def DetectLines(contours):
 	"""Function to change contours to sets of sorted lines"""	
@@ -87,13 +105,16 @@ if __name__ == '__main__':
 	img = image
 	cont = DetectLines(contours)
 	print(len(cont))
-	for ln in cont:
-		print(ln)
-		for c in ln:
-			print(c.reshape((len(c), 2)))
-			img = cv2.drawContours(img, c, -1, (0, 255, 0), 0)
-			plt.imshow(img)
-			plt.show()
+#	for ln in cont:
+#		print(ln)
+#		for c in ln:
+#			print(c.reshape((len(c), 2)))
+#			img = cv2.drawContours(img, c, -1, (0, 255, 0), 0)
+#			plt.imshow(img)
+#			plt.show()
+
+	EraseInner(cont)
+
 	cv2.imshow("grayscale", grayscale)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
