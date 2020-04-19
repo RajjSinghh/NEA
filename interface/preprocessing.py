@@ -36,7 +36,6 @@ def EraseInnerHelper(line, c):
 		next_val = [x, y, w, h]
 
 		if next_val[0] > initial[0] and next_val[0] < initial[0]  + initial[2]:
-			print("got one")
 			line.pop(index + 1)
 			index -= 1
 		index += 1
@@ -92,14 +91,19 @@ def Process(image, grayscale):
 			sample = cv2.resize(sample, (28, 28))
 			sample = cv2.bitwise_not(sample)
 			digits[-1].append(sample)
-	return digits
+	return digits, contours
 
 	
 
 if __name__ == '__main__':
-	image = cv2.imread('bin/printed.jpg')
+	image = cv2.imread('bin/numbers.jpg')
 	grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#	image, grayscale, contours = FindDigits(image, grayscale)
+	image, grayscale, contours = FindDigits(image, grayscale)
+	image = cv2.drawContours(image, contours, -1, (255, 0, 0),0 )
+	cv2.imshow("test", image)
+
+	digits = Process(image, grayscale)
+
 ##	print(grayscale)
 ##	plt.imshow(grayscale)
 ##	plt.show()
@@ -144,24 +148,22 @@ if __name__ == '__main__':
 #	plt.imshow(image)
 #	plt.show()
 ### have 22, must have around 6000 for train and 1000 for test	
-##	count = 0
-##	for line in contours:
-##		symbol = 0
-##		for a in line:
-##			x, y, w, h = cv2.boundingRect(a)
-##			sample = grayscale[y - 1:y+h +1, x - 1:x + w + 1]
-##			sample = cv2.resize(sample, (28, 28))
-##			sample = cv2.bitwise_not(sample)
-##			cv2.imwrite(f"data/{count}.jpg", sample)
-##			count += 1
-#			
-#
-
-	digits = Process(image, grayscale)
+	count = 0
 	for line in digits:
-		for digit in line:
-			plt.imshow(digit)
+		symbol = 0
+		for a in line:
+			plt.imshow(a)
 			plt.show()
+			cv2.imwrite("data/" + str(count) + ".jpg", a)
+			count += 1
+      		
+
+
+	#digits = Process(image, grayscale, contours)
+#	for line in digits:
+#		for digit in line:
+#			plt.imshow(digit)
+#			plt.show()
 	cv2.imshow("grayscale", image)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()

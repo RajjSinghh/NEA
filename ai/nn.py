@@ -35,31 +35,36 @@ def Create_Dataset(xtrain, ytrain, xtest,ytest):
 xtrain, ytrain, xtest, ytest = Create_Dataset(xtrain, ytrain, xtest, ytest)
 xtrain, ytrain, xtest, ytest = np.array(xtrain), np.array(ytrain), np.array(xtest), np.array(ytest)
 
-print(len(xtrain))
+print(xtrain.shape)
 print(len(ytrain)) 
 
-#model = tf.keras.models.Sequential()
-#
-#model.add(tf.keras.layers.Flatten())
-#model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
-#model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
-#model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
-#model.add(tf.keras.layers.Dense(14, activation=tf.nn.softmax))
-#
-#
-#
-##`model.add(tf.keras.layers.Dense(16, activation=tf.nn.sigmoid))
-##`model.add(tf.keras.layers.Dense(16, activation=tf.nn.sigmoid))
-##`model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
-#model.compile(optimizer='adam', loss="sparse_categorical_crossentropy", metrics=["accuracy"]  )
-#xtrain = xtrain / 256
-#xtest = xtest / 256
-#model.fit(xtrain, ytrain, epochs=10)
-#
-#model.save('read.model')
+model = tf.keras.models.Sequential()
+model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu", input_shape= (len(xtrain),28, 28)))
+model.add(tf.keras.layers.MaxPooling2D(2,2))
+model.add(tf.keras.layers.Flatten())
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(14, activation=tf.nn.softmax))
 
 
-model = tf.keras.models.load_model('read.model')
+#`model.add(tf.keras.layers.Dense(16, activation=tf.nn.sigmoid))
+#`model.add(tf.keras.layers.Dense(16, activation=tf.nn.sigmoid))
+#`model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
+model.compile(optimizer='adam', loss="sparse_categorical_crossentropy", metrics=["accuracy"]  )
+xtrain = xtrain / 256
+xtest = xtest / 256
+model.fit(xtrain, ytrain, epochs=10)
+
+model.save('better.model')
+
+
+model = tf.keras.models.load_model('better.model')
 val_loss, val_acc = model.evaluate(xtest, ytest)
 
 print(val_loss, val_acc)

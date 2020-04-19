@@ -2,6 +2,8 @@ import tkinter as tk
 import matplotlib
 import matplotlib.pyplot as plt
 from preprocessing import *
+import tensorflow as tf
+import numpy as np
 
 class MenuWindow(tk.Tk):
 	def __init__(self):
@@ -9,7 +11,7 @@ class MenuWindow(tk.Tk):
 		self.geometry = ("600x400")
 		welcome = tk.Label(self, text="Welcome to the AI Marking System")
 		welcome.pack()
-		mark = tk.Button(self, text="Mark Work", command=lambda:MarkWindow())
+		mark = tk.Button(self, text="Mark Work", command=MarkWindow)
 		mark.pack()
 		
 		self.quit = tk.Button(self, text="Quit", command=self.destroy)
@@ -22,9 +24,13 @@ class MarkWindow(tk.Tk):
 		self.file_path = self.entry.text
 		self.load = tk.Button(self, text="load image", command=self.GetEntryText)
 		self.load.pack()
+		self.mark_button = tk.Button(text="Mark", command=self.Mark)
+		self.mark_button.pack()
 		self.text = ""
 		self.image = None
 		self.threshold = None
+		self.model = tf.keras.models.load_model("better.model")
+		self.CHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "*", "/", "-"]	
 		##Add a display using matplotlib or cv2?
 		##Poll entry window for text and if text != none, destroy entry
 	
@@ -35,9 +41,21 @@ class MarkWindow(tk.Tk):
 	def Display(self):
 		self.image = cv2.imread(self.text, cv2.IMREAD_COLOR)
 		self.image_grayscale = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-		self.image, self.image_grayscale, self.contours = FindDigits(self.image, self.image_grayscale)
-		plt.imshow(self.image, cmap="gray", interpolation='bicubic')
+		self.digits, self.contours = Process(self.image, self.image_grayscale)
+		plt.imshow(self.image)
 		plt.show()
+
+	def Mark(self):
+		for c, line in enumerate(self.digits):
+			prediction = self.model.predict(np.array(line))
+			for c, i in enumerate(line):
+				print(np.argmax(prediction[c]))
+				plt.imshow(i)
+				plt.show()
+				question = ""
+			for char in prediction:
+				question += self.CHARS[np.argmax(char)]
+			print(question)
 
 class EntryWindow(tk.Tk):
 	def __init__(self):
