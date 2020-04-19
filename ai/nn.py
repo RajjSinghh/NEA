@@ -33,7 +33,7 @@ def Create_Dataset(xtrain, ytrain, xtest,ytest):
 
 	
 xtrain, ytrain, xtest, ytest = Create_Dataset(xtrain, ytrain, xtest, ytest)
-xtrain, ytrain, xtest, ytest = np.array(xtrain), np.array(ytrain), np.array(xtest), np.array(xtest)
+xtrain, ytrain, xtest, ytest = np.array(xtrain), np.array(ytrain), np.array(xtest), np.array(ytest)
 
 print(len(xtrain))
 print(len(ytrain)) 
@@ -60,13 +60,9 @@ print(len(ytrain))
 
 
 model = tf.keras.models.load_model('read.model')
-predictions = model.predict(xtest)
-for c,i in enumerate(predictions):
-	print(np.argmax(i))
-	plt.imshow(xtest[c])
-	plt.show()
-		
+val_loss, val_acc = model.evaluate(xtest, ytest)
 
+print(val_loss, val_acc)
 
 ##OBJECTIVE MET, 99% training accuracy, 97% test accuracy
 
