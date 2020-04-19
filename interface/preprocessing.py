@@ -27,24 +27,23 @@ def Partition(lst, low, high, key):
 	lst[i], lst[high] = lst[high], lst[i]
 	return i
 		
-def EraseInner(contours, image):
+def EraseInner(contours, image, grayscale):
+	c = []
 	for line in contours:
-		for index, contour in enumerate(line[:len(line)-2]):	
-			x, y, w, h = cv2.boundingRect(contour)
+		index = 0
+		while index < len(line) -1:	
+			x, y, w, h = cv2.boundingRect(line[index])
 			initial = [x, y, w, h]
-			x, y, w, h = cv2.boundingRect(contours[index + 1])
+			x, y, w, h = cv2.boundingRect(line[index + 1])
 			next_val = [x, y, w, h]
 
-			if range(next_val[0],next_val[0] + next_val[2]) in range(initial[0], initial[0] + initial[2]):
+			if next_val[0] > initial[0] and next_val[0] < initial[0]  + initial[2]:
+				print("got one")
 				line.pop(index + 1)
-
-			#cv2.rectangle(grayscale, (x, y), (x+w, y+h), (0, 255, 0), 2)
-			sample = grayscale[y-1:y+h+1,x-1:x+w+1]
-			sample = cv2.bitwise_not(sample)
-			print(sample.shape)
-			sample = cv2.resize(sample, (28, 28))	
-			plt.imshow(sample)
-			plt.show()
+				index -= 1
+			index += 1
+		c.append(line)
+	return c
 
 def DetectLines(contours):
 	"""Function to change contours to sets of sorted lines"""	
@@ -75,7 +74,7 @@ def DetectLines(contours):
 	return sorted_x
 
 if __name__ == '__main__':
-	image = cv2.imread('bin/printed.jpg')
+	image = cv2.imread('bin/alphabet.jpg')
 	grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	image, grayscale, contours = FindDigits(image, grayscale)
 #	print(grayscale)
@@ -104,6 +103,8 @@ if __name__ == '__main__':
 #	print(contours)
 	img = image
 	cont = DetectLines(contours)
+	
+
 	print(len(cont))
 #	for ln in cont:
 #		print(ln)
@@ -113,8 +114,24 @@ if __name__ == '__main__':
 #			plt.imshow(img)
 #			plt.show()
 
-	EraseInner(cont)
+	contours = EraseInner(cont, img, grayscale)
+	
+	for line in contours:
+		cv2.drawContours(image, line, -1, (255, 0, 0), 0)
 
-	cv2.imshow("grayscale", grayscale)
+## have 22, must have around 6000 for train and 1000 for test	
+	count = 0
+	for line in contours:
+		symbol = 0
+		for a in line:
+			x, y, w, h = cv2.boundingRect(a)
+			sample = grayscale[y - 1:y+h +1, x - 1:x + w + 1]
+			sample = cv2.resize(sample, (28, 28))
+			sample = cv2.bitwise_not(sample)
+			cv2.imwrite(f"data/{count}.jpg", sample)
+			count += 1
+			
+
+	cv2.imshow("grayscale", image)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
